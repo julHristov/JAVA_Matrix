@@ -1,0 +1,99 @@
+import java.util.Arrays;
+import java.util.Scanner;
+
+public class Main {
+    private static Scanner scanner = new Scanner(System.in);
+
+    public static void main(String[] args) {
+       String line = scanner.nextLine();
+       int rows = Integer.parseInt(line);
+
+        int[][] matrix = new int[rows][];
+
+        int[][] inputMatrix = takeMatrix(rows, matrix);
+        String[] newLine = scanner.nextLine().split(" ");
+        int[] coordinates = takeCoordinatesArray(newLine);
+        int sum = 0;
+
+        int max = Integer.MIN_VALUE;
+
+        for (int i = 0; i < coordinates.length - 1; i+=2) {
+            int[]array = {coordinates[i], coordinates[i+1]};
+            sum = findSum(array, inputMatrix, rows);
+            if(sum > max){
+                max = sum;
+            }
+        }
+        System.out.println(max);
+    }
+
+    public static int[][] takeMatrix(int rows, int[][] matrix) {
+        for (int row = 0; row < rows; row++) {
+            String line = scanner.nextLine();
+            String[] elements = line.split(" ");
+            matrix[row] = new int[elements.length];
+            for (int col = 0; col < elements.length; col++) {
+                matrix[row][col] = Integer.parseInt(elements[col]);
+            }
+        }
+        return matrix;
+    }
+    public static int[] takeCoordinatesArray(String[]line){
+        int[] array = new int[line.length];
+        for (int i = 0; i < line.length; i++) {
+            array[i] = Integer.parseInt(line[i]);
+        }
+        return array;
+    }
+
+    public static int findSum(int[] array, int[][] matrix, int rows){
+        int sum = 0;
+        int start = array[0];
+        int end = array[1];
+
+        if(start > 0 && end > 0){
+            for (int row = start - 1; row >= 0; row--) {
+                if(row < start - 1){
+                    sum+=matrix[row][end - 1];
+                    continue;
+                }
+                for (int col = 0; col <= end - 1; col++) {
+                    sum+=matrix[row][col];
+                }
+            }
+        }else if(start < 0 && end < 0){
+            start = Math.abs(array[0]);
+            end = Math.abs(array[1]);
+            for (int row = start - 1; row <= rows - 1; row++) {
+                if(row > start - 1){
+                    sum+=matrix[row][end - 1];
+                    continue;
+                }
+                for(int col = matrix[0].length - 1; col >= end - 1; col--)
+                    sum+=matrix[row][col];
+            }
+        }else if(start > 0 && end < 0){
+            end = Math.abs(array[1]);
+                for (int row = start - 1; row <= rows - 1; row++) {
+                    if(row >= start){
+                        sum+=matrix[row][end - 1];
+                        continue;
+                    }
+                    for(int col = 0; col <= end - 1; col++){
+                        sum+=matrix[start - 1][col];
+                    }
+                }
+        }else if(start < 0 && end > 0){
+            start = Math.abs(array[0]);
+            for (int row = start - 1; row >= 0; row--) {
+                if(row < start - 1){
+                    sum+=matrix[row][end - 1];
+                    continue;
+                }
+                for(int col = matrix[0].length - 1; col >= end - 1; col--)
+                    sum+=matrix[row][col];
+            }
+        }
+        return sum;
+    }
+}
